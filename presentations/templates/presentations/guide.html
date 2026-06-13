@@ -1,0 +1,64 @@
+{% extends 'presentations/base.html' %}
+
+{% block title %}사용 방법 | 노터치 AI 발표도우미{% endblock %}
+
+{% block content %}
+<div class="card guide-card">
+    <h2 class="card-title">📖 노터치 AI 발표도우미 사용 방법</h2>
+    
+    <div class="guide-section">
+        <h3>🤖 Teachable Machine 포즈 클래스 정의</h3>
+        <p>본 서비스는 미리 학습된 다음 5가지 포즈를 구분하여 작동합니다.</p>
+        
+        <div class="gesture-grid">
+            <div class="gesture-card">
+                <div class="gesture-name text-neutral">STOP</div>
+                <div class="gesture-desc">양손을 편안하게 내리거나 정지한 동작입니다. 아무 일도 실행하지 않으며, 다음 명령 입력을 대기하는 <strong>중립 상태</strong>로 취급됩니다.</div>
+            </div>
+            <div class="gesture-card">
+                <div class="gesture-name text-primary">RIGHT_HAND</div>
+                <div class="gesture-desc">오른손을 들어 올리는 동작입니다. 조건을 충족하면 <strong>다음 슬라이드(→)</strong>로 이동합니다.</div>
+            </div>
+            <div class="gesture-card">
+                <div class="gesture-name text-primary">LEFT_HAND</div>
+                <div class="gesture-desc">왼손을 들어 올리는 동작입니다. 조건을 충족하면 <strong>이전 슬라이드(←)</strong>로 이동합니다.</div>
+            </div>
+            <div class="gesture-card">
+                <div class="gesture-name text-neutral">NONE</div>
+                <div class="gesture-desc">카메라 화면에 사용자가 없거나 인식할 수 없는 상태입니다. 아무 일도 실행하지 않으며 <strong>중립 상태</strong>로 취급됩니다.</div>
+            </div>
+            <div class="gesture-card">
+                <div class="gesture-name text-warning">INDICATE</div>
+                <div class="gesture-desc">발표 도중 화면의 특정 영역을 손으로 가리키는 동작입니다. 이 동작은 발표의 자연스러운 흐름을 위해 <strong>절대 슬라이드를 넘기지 않고 무시</strong>되며, <strong>중립 상태</strong>로 취급됩니다.</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="guide-section mt-6">
+        <h3>🛡️ 오작동 방지 시스템 안내 (가장 중요)</h3>
+        <p>자연스러운 발표를 돕기 위해 다음과 같은 엄격한 방지 알고리즘이 내장되어 있습니다.</p>
+        <ul class="guide-bullets">
+            <li><strong>동작 유지 (Hold):</strong> 손을 드는 동작(`RIGHT_HAND` 또는 `LEFT_HAND`)을 취했을 때, 약 <strong>0.8초(800ms) 동안 지속적</strong>으로 동작이 인식되어야 슬라이드가 넘어갑니다. 스치듯 손을 올리는 동작으로는 슬라이드가 넘어가지 않습니다.</li>
+            <li><strong>쿨타임 (Cooldown):</strong> 한 번 슬라이드가 넘어가면, 다음 <strong>2초(2000ms) 동안은 추가적인 AI 제어 명령이 제한</strong>되어 슬라이드가 연속해서 여러 장 넘어가는 것을 방지합니다.</li>
+            <li><strong>중립 상태 복귀 (Neutral Return):</strong> 슬라이드를 넘긴 후에는 반드시 <strong>중립 상태(`STOP`, `NONE`, `INDICATE`)로 돌아와 약 0.5초(500ms) 이상 유지</strong>되어야만 다음 손동작 명령을 내릴 수 있습니다. 계속 손을 들고 있어도 슬라이드가 한 번만 넘어가는 이유입니다.</li>
+            <li><strong>신뢰도 기준 (Confidence):</strong> 인식 신뢰도가 <strong>90%(0.90) 이상</strong>인 경우에만 손동작 명령으로 승인됩니다. 애매한 포즈는 안전하게 무시됩니다.</li>
+        </ul>
+    </div>
+
+    <div class="guide-section mt-6">
+        <h3>⌨️ 보조 조작 키</h3>
+        <p>발표 화면에서는 AI 제어 외에도 다음과 같은 키보드 단축키를 기본 지원합니다.</p>
+        <ul class="guide-bullets">
+            <li><strong>오른쪽 방향키 (→) / Space:</strong> 다음 슬라이드</li>
+            <li><strong>왼쪽 방향키 (←):</strong> 이전 슬라이드</li>
+            <li><strong>Home:</strong> 첫 페이지로 이동</li>
+            <li><strong>End:</strong> 마지막 페이지로 이동</li>
+            <li><strong>ESC:</strong> 전체화면 종료 (전체화면 모드 시)</li>
+        </ul>
+    </div>
+    
+    <div class="guide-actions mt-6">
+        <a href="{% url 'presentations:upload' %}" class="btn btn-primary btn-large">자료 업로드하러 가기</a>
+    </div>
+</div>
+{% endblock %}

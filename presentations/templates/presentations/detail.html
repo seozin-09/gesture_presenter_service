@@ -1,0 +1,68 @@
+{% extends 'presentations/base.html' %}
+
+{% block title %}{{ presentation.title }} 상세 | 노터치 AI 발표도우미{% endblock %}
+
+{% block content %}
+<div class="card detail-card">
+    <div class="detail-header">
+        <h2>📊 발표 자료 정보</h2>
+        <span class="badge badge-large">{{ presentation.file_type|upper }}</span>
+    </div>
+    
+    <div class="detail-info-grid">
+        <div class="info-item">
+            <span class="info-label">제목</span>
+            <span class="info-value font-bold">{{ presentation.title }}</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">원본 파일명</span>
+            <span class="info-value">{{ presentation.original_filename }}</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">업로드 일시</span>
+            <span class="info-value">{{ presentation.uploaded_at|date:"Y-m-d H:i:s" }}</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">변환 상태</span>
+            <span class="info-value">
+                {% if presentation.conversion_status == 'ready' %}
+                <span class="status-badge status-ready">준비 완료 (발표 가능)</span>
+                {% elif presentation.conversion_status == 'pending' %}
+                <span class="status-badge status-pending">변환 진행 중</span>
+                {% else %}
+                <span class="status-badge status-failed">변환 실패</span>
+                {% endif %}
+            </span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">전체 페이지 수</span>
+            <span class="info-value">
+                {% if presentation.total_pages %}
+                {{ presentation.total_pages }} 페이지
+                {% else %}
+                - (발표 화면 로드 시 확인)
+                {% endif %}
+            </span>
+        </div>
+    </div>
+
+    {% if presentation.conversion_status == 'failed' %}
+    <div class="alert alert-danger mt-6">
+        <h4>⚠️ 변환 오류 발생</h4>
+        <p class="error-msg-text">{{ presentation.conversion_error }}</p>
+        <p class="suggestion-text mt-2">
+            <strong>권장사항:</strong> PPT/PPTX 파일 형식을 서버에서 PDF로 변환하는 도중 문제가 발생했습니다. 파일을 <strong>PDF 형식으로 직접 저장하신 후 다시 업로드</strong>하시면 즉시 사용하실 수 있습니다.
+        </p>
+    </div>
+    {% endif %}
+
+    <div class="detail-actions mt-6">
+        {% if presentation.conversion_status == 'ready' %}
+        <a href="{% url 'presentations:show' presentation.pk %}" class="btn btn-primary btn-large">🖐️ AI 발표 시작</a>
+        {% else %}
+        <button class="btn btn-secondary btn-large" disabled>🖐️ AI 발표 시작 (변환 완료 대기)</button>
+        {% endif %}
+        <a href="{% url 'presentations:list' %}" class="btn btn-outline btn-large">목록으로 돌아가기</a>
+    </div>
+</div>
+{% endblock %}

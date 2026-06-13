@@ -1,0 +1,56 @@
+{% extends 'presentations/base.html' %}
+
+{% block title %}발표 자료 목록 | 노터치 AI 발표도우미{% endblock %}
+
+{% block content %}
+<div class="list-section">
+    <div class="list-header">
+        <h2>📋 업로드된 발표 자료 목록</h2>
+        <a href="{% url 'presentations:upload' %}" class="btn btn-primary">새 자료 업로드</a>
+    </div>
+
+    {% if presentations %}
+    <div class="table-responsive">
+        <table class="list-table">
+            <thead>
+                <tr>
+                    <th>제목</th>
+                    <th>원본 파일명</th>
+                    <th>형식</th>
+                    <th>업로드 날짜</th>
+                    <th>변환 상태</th>
+                    <th>작업</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for pres in presentations %}
+                <tr>
+                    <td class="font-bold">{{ pres.title }}</td>
+                    <td class="text-muted">{{ pres.original_filename }}</td>
+                    <td><span class="badge badge-type">{{ pres.file_type|upper }}</span></td>
+                    <td>{{ pres.uploaded_at|date:"Y-m-d H:i" }}</td>
+                    <td>
+                        {% if pres.conversion_status == 'ready' %}
+                        <span class="status-badge status-ready">준비 완료</span>
+                        {% elif pres.conversion_status == 'pending' %}
+                        <span class="status-badge status-pending">변환 중...</span>
+                        {% else %}
+                        <span class="status-badge status-failed">변환 실패</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'presentations:detail' pres.pk %}" class="btn btn-outline btn-sm">상세 보기</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <p>업로드된 발표 자료가 없습니다.</p>
+        <a href="{% url 'presentations:upload' %}" class="btn btn-primary mt-4">첫 발표 자료 업로드하기</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends 'presentations/base.html' %}
+
+{% block title %}발표 기록 | 노터치 AI 발표도우미{% endblock %}
+
+{% block content %}
+<div class="history-section">
+    <div class="list-header">
+        <h2>📊 AI 발표 진행 기록</h2>
+    </div>
+
+    {% if sessions %}
+    <div class="table-responsive">
+        <table class="list-table">
+            <thead>
+                <tr>
+                    <th>발표 제목</th>
+                    <th>시작 시간</th>
+                    <th>종료 시간</th>
+                    <th>다음 슬라이드 명령</th>
+                    <th>이전 슬라이드 명령</th>
+                    <th>총 인식 횟수</th>
+                    <th>진행 상황</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for sess in sessions %}
+                <tr>
+                    <td class="font-bold">{{ sess.presentation.title }}</td>
+                    <td>{{ sess.started_at|date:"Y-m-d H:i:s" }}</td>
+                    <td>
+                        {% if sess.ended_at %}
+                        {{ sess.ended_at|date:"Y-m-d H:i:s" }}
+                        {% else %}
+                        <span class="text-danger font-bold">진행 중 / 비정상 종료</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-center">{{ sess.next_count }}회</td>
+                    <td class="text-center">{{ sess.prev_count }}회</td>
+                    <td class="text-center font-bold">{{ sess.total_actions }}회</td>
+                    <td>
+                        {% if sess.ended_at %}
+                        <span class="status-badge status-ready">완료</span>
+                        {% else %}
+                        <span class="status-badge status-pending">미종료</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <p>발표 진행 기록이 존재하지 않습니다.</p>
+        <a href="{% url 'presentations:list' %}" class="btn btn-primary mt-4">발표 시작하기</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

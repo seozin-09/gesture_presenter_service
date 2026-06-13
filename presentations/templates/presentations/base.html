@@ -1,0 +1,47 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}노터치 AI 발표도우미{% endblock %}</title>
+    <!-- Google Fonts: Outfit -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- CSS 연결 -->
+    <link rel="stylesheet" href="{% static 'presentations/css/style.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-container">
+            <a href="{% url 'presentations:home' %}" class="app-logo">
+                <span class="logo-emoji">🖐️</span>
+                <span class="logo-text">노터치 AI 발표도우미</span>
+            </a>
+            <nav class="app-nav">
+                <ul>
+                    <li><a href="{% url 'presentations:home' %}" class="nav-link">홈</a></li>
+                    <li><a href="{% url 'presentations:upload' %}" class="nav-link">업로드</a></li>
+                    <li><a href="{% url 'presentations:list' %}" class="nav-link">발표 목록</a></li>
+                    <li><a href="{% url 'presentations:guide' %}" class="nav-link">사용 방법</a></li>
+                    <li><a href="{% url 'presentations:history' %}" class="nav-link">발표 기록</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="app-content-wrapper">
+        <div class="content-container">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <footer class="app-footer">
+        <div class="footer-container">
+            <p>&copy; 2026 노터치 AI 발표도우미. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,115 @@
+{% extends 'presentations/base.html' %}
+{% load static %}
+
+{% block title %}{{ presentation.title }} - 발표 시작 | 노터치 AI 발표도우미{% endblock %}
+
+{% block extra_css %}
+<!-- 추가 스타일은 base style.css에 정의하되 필요한 속성이 있으면 style.css에 추가하겠습니다. -->
+{% endblock %}
+
+{% block content %}
+<div class="presentation-show-container" id="presentation-container">
+    <!-- 왼쪽: 슬라이드 영역 -->
+    <div class="slide-panel" id="slide-fullscreen-target">
+        <div class="slide-viewport">
+            <canvas id="pdf-canvas"></canvas>
+            <div id="loading-overlay" class="overlay">
+                <div class="spinner"></div>
+                <p id="overlay-message">PDF를 불러오는 중입니다...</p>
+            </div>
+        </div>
+        
+        <!-- 슬라이드 컨트롤 하단바 -->
+        <div class="slide-controls-bar">
+            <div class="page-indicator">
+                <span id="current-page">0</span> / <span id="total-pages">0</span>
+            </div>
+            <div class="control-buttons">
+                <button id="btn-prev-slide" class="btn btn-outline btn-sm">이전 슬라이드</button>
+                <button id="btn-next-slide" class="btn btn-outline btn-sm">다음 슬라이드</button>
+                <button id="btn-fullscreen" class="btn btn-secondary btn-sm">전체화면 시작</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 오른쪽: AI & 캠 제어 사이드바 -->
+    <div class="ai-sidebar">
+        <!-- 웹캠 프리뷰 -->
+        <div class="sidebar-section webcam-section">
+            <h3>📷 웹캠 프리뷰</h3>
+            <div class="webcam-wrapper">
+                <canvas id="webcam-canvas" width="200" height="200"></canvas>
+                <!-- Teachable Machine 라이브러리가 웹캠을 그리기 위해 canvas를 사용함 -->
+            </div>
+        </div>
+
+        <!-- AI 상태창 -->
+        <div class="sidebar-section status-section">
+            <h3>🤖 AI 제어 상태</h3>
+            <div class="status-grid">
+                <div class="status-item">
+                    <span class="status-label">현재 상태:</span>
+                    <span id="ai-status-text" class="status-val text-warning">AI 모델을 불러오는 중입니다.</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">인식 동작:</span>
+                    <span id="detected-class" class="status-val font-bold text-primary">-</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">인식 확률:</span>
+                    <span id="detection-confidence" class="status-val">-</span>
+                </div>
+            </div>
+            
+            <div class="ai-action-buttons mt-4">
+                <button id="btn-start-ai" class="btn btn-primary btn-block" disabled>AI 제어 시작</button>
+                <button id="btn-stop-ai" class="btn btn-secondary btn-block mt-2" style="display: none;">AI 제어 중지</button>
+            </div>
+        </div>
+
+        <!-- 일반 동작 -->
+        <div class="sidebar-section end-section text-center">
+            <button id="btn-end-presentation" class="btn btn-danger btn-block">발표 종료</button>
+            <a href="{% url 'presentations:detail' presentation.pk %}" id="btn-back-detail" class="btn btn-text btn-block mt-2">목록으로 돌아가기</a>
+        </div>
+
+        <!-- 안내창 -->
+        <div class="sidebar-section info-section">
+            <h4>⌨️ 키보드 조작</h4>
+            <ul>
+                <li><strong>우측 방향키 (→)</strong>: 다음 슬라이드</li>
+                <li><strong>좌측 방향키 (←)</strong>: 이전 슬라이드</li>
+                <li><strong>Home</strong>: 첫 페이지</li>
+                <li><strong>End</strong>: 마지막 페이지</li>
+                <li><strong>ESC</strong>: 전체화면 종료</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- CSRF Token and Presentation Metadata -->
+<div id="presentation-metadata" 
+     data-id="{{ presentation.id }}" 
+     data-pdf-url="{{ pdf_url }}"
+     style="display: none;">
+</div>
+{% csrf_token %}
+{% endblock %}
+
+{% block scripts %}
+<!-- PDF.js CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+<script>
+    // PDF.js 워커 경로 설정
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+</script>
+
+<!-- TensorFlow.js and Teachable Machine Pose CDN -->
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.3.1/dist/tf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@teachablemachine/pose@0.8/dist/teachablemachine-pose.min.js"></script>
+
+<!-- 프로젝트 JS 파일 연결 -->
+<script src="{% static 'presentations/js/pdf-viewer.js' %}"></script>
+<script src="{% static 'presentations/js/tm-pose-control.js' %}"></script>
+<script src="{% static 'presentations/js/presentation-show.js' %}"></script>
+{% endblock %}
