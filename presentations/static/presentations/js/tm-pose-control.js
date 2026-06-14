@@ -86,7 +86,7 @@
             
             // 웹캠 초기화 (200x200 크기, Teachable Machine standard)
             const size = 200;
-            const flip = true; // 거울 모드
+            const flip = false; // CSS에서 반전(scaleX(-1))을 처리하므로 여기서는 false로 설정
             webcam = new tmPose.Webcam(size, size, flip);
             await webcam.setup(); // 카메라 요청
             await webcam.play();
