@@ -708,8 +708,6 @@ body {
     width: 100% !important;
     height: 100% !important;
     object-fit: cover;
-    transform: scaleX(-1) !important; /* 거울 모드(좌우 반전) 강제 적용 */
-    -webkit-transform: scaleX(-1) !important;
 }
 
 .status-grid {

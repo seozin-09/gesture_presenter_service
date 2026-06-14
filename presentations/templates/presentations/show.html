@@ -5,10 +5,19 @@
 
 {% block extra_css %}
 <style>
-    /* 거울 모드 강제 적용 */
-    #webcam-canvas {
+    /* 1. 카메라 박스 자체를 통째로 뒤집음 (가장 확실한 방법) */
+    .webcam-wrapper {
         transform: scaleX(-1) !important;
         -webkit-transform: scaleX(-1) !important;
+        border: 5px solid red !important; /* 이 빨간 테두리가 보이면 코드가 적용된 것입니다! */
+        box-sizing: border-box;
+    }
+    
+    /* 2. 내부 캔버스는 뒤집지 않음 (이중 반전 방지) */
+    #webcam-canvas {
+        transform: none !important;
+        width: 100% !important;
+        height: 100% !important;
     }
 </style>
 {% endblock %}

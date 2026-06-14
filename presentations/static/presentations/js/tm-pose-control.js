@@ -86,7 +86,7 @@
             
             // 웹캠 초기화 (200x200 크기, Teachable Machine standard)
             const size = 200;
-            const flip = false; // CSS에서 반전(scaleX(-1))을 처리하므로 여기서는 false로 설정
+            const flip = false; // 모든 반전은 CSS(wrapper)에서 처리합니다.
             webcam = new tmPose.Webcam(size, size, flip);
             await webcam.setup(); // 카메라 요청
             await webcam.play();
@@ -96,13 +96,7 @@
             if (wrapper) {
                 wrapper.innerHTML = ''; // 기존 placeholder 비우기
                 webcam.canvas.id = 'webcam-canvas';
-                // JS에서 직접 거울 모드 스타일 주입 (캐시 우회)
-                webcam.canvas.style.transform = 'scaleX(-1)';
-                webcam.canvas.style.webkitTransform = 'scaleX(-1)';
-                webcam.canvas.style.width = '100%';
-                webcam.canvas.style.height = '100%';
-                webcam.canvas.style.objectFit = 'cover';
-                
+                // 인라인 스타일 제거 (CSS에서 제어하도록 함)
                 wrapper.appendChild(webcam.canvas);
                 ctx = webcam.canvas.getContext('2d');
             }
