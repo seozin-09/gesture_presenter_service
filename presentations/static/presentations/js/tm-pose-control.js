@@ -86,7 +86,7 @@
             
             // 웹캠 초기화 (200x200 크기, Teachable Machine standard)
             const size = 200;
-            const flip = false; // 모든 반전은 CSS(wrapper)에서 처리합니다.
+            const flip = true; // 라이브러리 차원에서 캔버스 자체를 뒤집어 AI 인식과 화면을 일치시킵니다.
             webcam = new tmPose.Webcam(size, size, flip);
             await webcam.setup(); // 카메라 요청
             await webcam.play();
@@ -96,7 +96,7 @@
             if (wrapper) {
                 wrapper.innerHTML = ''; // 기존 placeholder 비우기
                 webcam.canvas.id = 'webcam-canvas';
-                // 인라인 스타일 제거 (CSS에서 제어하도록 함)
+                // CSS가 아닌 JS에서 뒤집힌 캔버스를 직접 삽입합니다.
                 wrapper.appendChild(webcam.canvas);
                 ctx = webcam.canvas.getContext('2d');
             }

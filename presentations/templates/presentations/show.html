@@ -5,16 +5,13 @@
 
 {% block extra_css %}
 <style>
-    /* 1. 카메라 박스 자체를 통째로 뒤집음 (가장 확실한 방법) */
+    /* 1. 이제 JS에서 flip: true를 사용하므로 CSS 반전은 제거합니다. */
     .webcam-wrapper {
-        transform: scaleX(-1) !important;
-        -webkit-transform: scaleX(-1) !important;
         box-sizing: border-box;
     }
     
-    /* 2. 내부 캔버스는 뒤집지 않음 (이중 반전 방지) */
+    /* 2. 캔버스 크기만 유지합니다. */
     #webcam-canvas {
-        transform: none !important;
         width: 100% !important;
         height: 100% !important;
     }
