@@ -707,7 +707,6 @@ body {
 #webcam-canvas {
     width: 100%;
     height: 100%;
-    transform: scaleX(-1); /* 거울 모드 */
     object-fit: cover;
 }
 
