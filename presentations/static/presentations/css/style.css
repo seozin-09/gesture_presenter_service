@@ -705,10 +705,11 @@ body {
 }
 
 #webcam-canvas {
-    width: 100%;
-    height: 100%;
+    width: 100% !important;
+    height: 100% !important;
     object-fit: cover;
-    transform: scaleX(-1); /* 거울 모드(좌우 반전) 적용 */
+    transform: scaleX(-1) !important; /* 거울 모드(좌우 반전) 강제 적용 */
+    -webkit-transform: scaleX(-1) !important;
 }
 
 .status-grid {
