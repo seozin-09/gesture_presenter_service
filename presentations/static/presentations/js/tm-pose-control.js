@@ -96,6 +96,13 @@
             if (wrapper) {
                 wrapper.innerHTML = ''; // 기존 placeholder 비우기
                 webcam.canvas.id = 'webcam-canvas';
+                // JS에서 직접 거울 모드 스타일 주입 (캐시 우회)
+                webcam.canvas.style.transform = 'scaleX(-1)';
+                webcam.canvas.style.webkitTransform = 'scaleX(-1)';
+                webcam.canvas.style.width = '100%';
+                webcam.canvas.style.height = '100%';
+                webcam.canvas.style.objectFit = 'cover';
+                
                 wrapper.appendChild(webcam.canvas);
                 ctx = webcam.canvas.getContext('2d');
             }

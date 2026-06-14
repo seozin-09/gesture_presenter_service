@@ -7,6 +7,16 @@
 <!-- 추가 스타일은 base style.css에 정의하되 필요한 속성이 있으면 style.css에 추가하겠습니다. -->
 {% endblock %}
 
+{% block extra_css %}
+<style>
+    /* 거울 모드 강제 적용 */
+    #webcam-canvas {
+        transform: scaleX(-1) !important;
+        -webkit-transform: scaleX(-1) !important;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="presentation-show-container" id="presentation-container">
     <!-- 왼쪽: 슬라이드 영역 -->
