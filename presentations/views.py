@@ -24,12 +24,10 @@ def upload_presentation(request):
             title = form.cleaned_data['title']
             uploaded_file = form.cleaned_data['file']
             
-            # 파일 정보 분석
             filename = uploaded_file.name
             ext = os.path.splitext(filename)[1].lower()
             file_type = ext[1:]  # 'pdf', 'ppt', 'pptx'
             
-            # Presentation 인스턴스 생성 및 original_file 저장 (이 시점에 파일이 media/presentations/original/ 에 저장됨)
             presentation = Presentation(
                 title=title,
                 original_file=uploaded_file,
@@ -39,28 +37,21 @@ def upload_presentation(request):
             )
             presentation.save()
             
-            # PDF인 경우
             if file_type == 'pdf':
-                # original_file을 pdf_file에도 할당하여 저장
                 presentation.pdf_file.save(filename, presentation.original_file.file, save=False)
                 presentation.conversion_status = 'ready'
                 presentation.save()
                 return redirect('presentations:list')
             
-            # PPT, PPTX인 경우
             else:
-                # 1. output 디렉토리 설정
                 pdf_output_dir = os.path.join(settings.MEDIA_ROOT, 'presentations', 'pdf')
                 os.makedirs(pdf_output_dir, exist_ok=True)
                 
-                # 2. original_file 경로 가져오기
                 input_path = presentation.original_file.path
                 
-                try:
-                    # 3. 변환 실행
+                try: # -> PPT/PPTX 변환하는건데 try-except 써서 에러 발생시 업로드한 파일은 유지하고 변환 실패만 띄움
                     converted_pdf_path = convert_office_to_pdf(input_path, pdf_output_dir)
                     
-                    # 4. 변환된 PDF 파일을 Django File 객체로 열어 pdf_file 필드에 저장
                     with open(converted_pdf_path, 'rb') as f:
                         pdf_filename = os.path.splitext(filename)[0] + '.pdf'
                         presentation.pdf_file.save(pdf_filename, File(f), save=False)
@@ -68,16 +59,11 @@ def upload_presentation(request):
                     presentation.conversion_status = 'ready'
                     presentation.save()
                     
-                    # 임시 생성된 파일이 media root 하위 pdf 폴더 외에 남아있지 않도록 정리 (만약 다른 경로에 생성되었다면)
-                    # convert_office_to_pdf는 pdf_output_dir에 바로 생성하므로 Django save 시 덮어쓰거나 중복될 수 있으나 큰 문제는 없음
-                    
                 except Exception as e:
-                    # 실패 시 예외 처리
                     presentation.conversion_status = 'failed'
                     presentation.conversion_error = str(e)
                     presentation.save()
-                    
-                    # 폼 에러와 함께 화면에 전달하기 위해 렌더링
+
                     context = {
                         'form': form,
                         'error_message': f"PPT/PPTX 변환에 실패했습니다. PDF로 다시 업로드해 주세요. (에러: {str(e)})"
@@ -117,7 +103,7 @@ def session_history(request):
     sessions = PresentationSession.objects.select_related('presentation').order_by('-started_at')
     return render(request, 'presentations/history.html', {'sessions': sessions})
 
-# API Views
+# 세션 코드 -> AI의 힘을 빌림
 
 @csrf_exempt
 @require_POST
@@ -136,6 +122,7 @@ def update_pages_api(request, pk):
         return JsonResponse({'error': 'total_pages가 누락되었습니다.'}, status=400)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+
 
 @csrf_exempt
 @require_POST
@@ -166,7 +153,6 @@ def action_session_api(request, session_id):
         confidence = data.get('confidence')
         slide_number = data.get('slide_number')
         
-        # 로그 저장
         GestureActionLog.objects.create(
             session=session,
             action=action,
@@ -174,7 +160,6 @@ def action_session_api(request, session_id):
             slide_number=slide_number
         )
         
-        # 카운트 업데이트
         if action in ['RIGHT_HAND', 'next']:
             session.next_count += 1
         elif action in ['LEFT_HAND', 'prev']:
